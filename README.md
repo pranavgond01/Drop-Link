@@ -114,18 +114,41 @@ for production internet-wide reliability.
 
 TURN should be added for networks where direct WebRTC ICE connectivity cannot be established.
 
+## Testing
+
+Run signaling server tests:
+```powershell
+cd C:\droplink\server
+npm test
+```
+
+Run frontend protocol and security tests:
+```powershell
+cd C:\droplink\web
+npm test
+npm run build
+```
+
+## Security Features
+
+DropLink incorporates several layers of security:
+- **End-to-End Integrity**: Automatic SHA-256 checksum calculation on sender and cryptographic verification on receiver before download.
+- **Path Traversal Protection & Filename Sanitization**: Incoming file names are stripped of path components, control characters, and reserved system names.
+- **WebSocket Signaling Hardening**: Max payload limits (64 KB) to prevent memory allocation DoS attacks.
+- **Signaling Rate Limiting**: Per-IP connection limits, room creation rate limiting, and brute-force lockout after repeated failed join attempts.
+- **Heartbeat Ping/Pong**: Dead/half-open client socket termination every 30s to prevent zombie rooms.
+- **Security Headers & CSP**: Content Security Policy, X-Content-Type-Options: nosniff, X-Frame-Options: DENY, and Referrer-Policy on HTTP endpoints.
+
 ## Current MVP limitations
 
 This version uses IndexedDB for received chunks and creates a Blob when the transfer completes.
 
-A later large-file version should use streaming file APIs / OPFS where browser support allows it and add:
+A later version can add:
 
 - true pause/resume
 - reconnect resume
-- SHA-256 integrity validation
 - multi-device discovery
 - QR camera scanning
-- TURN
-- transfer encryption/session confirmation
+- TURN configuration
 - PWA installation
 - native Android/iOS wrappers

@@ -2671,3 +2671,161 @@ i {
       none !important;
   }
 }
+
+.transfer-controls {
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+}
+
+.pause-button,
+.cancel-button {
+  min-width: 58px;
+
+  border-radius: 9px;
+
+  padding:
+    7px 9px;
+
+  font:
+    7px var(--mono);
+
+  letter-spacing:
+    0.1em;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.pause-button {
+  border:
+    1px solid
+    rgba(115, 244, 255, 0.18);
+
+  color:
+    rgba(115, 244, 255, 0.75);
+
+  background:
+    rgba(115, 244, 255, 0.035);
+}
+
+.pause-button:hover {
+  border-color:
+    rgba(115, 244, 255, 0.4);
+
+  color:
+    #d9fbff;
+
+  background:
+    rgba(115, 244, 255, 0.07);
+}
+
+.cancel-button {
+  border:
+    1px solid
+    rgba(255, 111, 140, 0.2);
+
+  color:
+    #a26978;
+
+  background:
+    rgba(255, 111, 140, 0.04);
+}
+
+.cancel-button:hover {
+  border-color:
+    rgba(255, 111, 140, 0.42);
+
+  color:
+    #ff9bad;
+
+  background:
+    rgba(255, 111, 140, 0.08);
+}
+
+.status-transferring
+.transfer-panel
+.drop-zone {
+  border-color:
+    rgba(199, 255, 85, 0.2);
+}
+
+.status-transferring
+.core-center
+b {
+  color:
+    var(--lime);
+}
+
+.status-transferring
+.core-center
+b::after {
+  content:
+    "";
+}
+
+/* Paused state */
+
+.app.status-transferring
+:has(.pause-button) {
+  --transfer-live:
+    1;
+}
+
+.drop-zone {
+  transition:
+    border-color 0.25s ease,
+    background 0.25s ease;
+}
+
+.leave-pill-button {
+  background: rgba(255, 111, 140, 0.08);
+  border: 1px solid rgba(255, 111, 140, 0.3);
+  color: #ff9bad;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font: 11px var(--mono, monospace);
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.leave-pill-button:hover {
+  background: rgba(255, 111, 140, 0.16);
+  border-color: rgba(255, 111, 140, 0.6);
+  color: #ffb8c5;
+}
+
+.room-actions .leave-button {
+  background: rgba(255, 111, 140, 0.08);
+  border: 1px solid rgba(255, 111, 140, 0.3);
+  color: #ff9bad;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.room-actions .leave-button:hover {
+  background: rgba(255, 111, 140, 0.16);
+  border-color: rgba(255, 111, 140, 0.6);
+  color: #ffb8c5;
+}
+
+.transfer-success-tag {
+  color: #c7ff55 !important;
+  font: 11px var(--mono, monospace);
+  letter-spacing: 0.08em;
+}
+
+.hash-code {
+  font: 11px var(--mono, monospace);
+  color: rgba(255, 255, 255, 0.55);
+  margin-top: 3px;
+}
+
+.hash-code code {
+  color: #73f4ff;
+}
