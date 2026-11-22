@@ -79,14 +79,26 @@ type ReceiveState = {
   startedAt: number;
 };
 
-const DEFAULT_ICE_SERVERS: RTCIceServer[] = [
-  { urls: "stun:stun.l.google.com:19302" },
-  { urls: "stun:stun.cloudflare.com:3478" },
-];
+const DEFAULT_ICE_SERVERS: RTCIceServer[] = (() => {
+  try {
+    const custom = import.meta.env.VITE_ICE_SERVERS;
+    if (custom) {
+      return JSON.parse(custom) as RTCIceServer[];
+    }
+  } catch {
+    // Fall back to public STUN
+  }
+  return [
+    { urls: "stun:stun.l.google.com:19302" },
+    { urls: "stun:stun.cloudflare.com:3478" },
+  ];
+})();
 
 const SIGNALING_URL =
   import.meta.env.VITE_SIGNALING_URL ||
-  `${location.protocol === "https:" ? "wss" : "ws"}://${location.hostname || "localhost"}:8080`;
+  (location.port === "5173"
+    ? `${location.protocol === "https:" ? "wss" : "ws"}://${location.hostname || "localhost"}:8080`
+    : `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}`);
 
 const initialProgress: ProgressState = {
   active: false,

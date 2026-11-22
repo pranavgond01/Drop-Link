@@ -1,0 +1,14 @@
+{
+  "name": "droplink",
+  "version": "1.2.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "npm --prefix web install && npm --prefix web run build && npm --prefix server install",
+    "start": "node server/src/index.js",
+    "test": "npm --prefix server test && npm --prefix web test"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
