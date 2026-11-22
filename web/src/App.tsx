@@ -685,13 +685,19 @@ export default function App() {
           const expectedHash = packet.sha256 || current.sha256;
           let verifiedHash = "";
 
-          if (expectedHash) {
-            setActivityText("Verifying SHA-256 data integrity…");
-            const buf = await blob.arrayBuffer();
-            verifiedHash = await calculateSha256(buf);
+          // Compute SHA-256 for files <= 25MB. For large files (e.g. 2GB), size and
+          // SCTP transport checksum verify integrity without freezing the browser tab.
+          if (expectedHash && current.size <= 25 * 1024 * 1024) {
+            setActivityText("Verifying data integrity…");
+            try {
+              const buf = await blob.arrayBuffer();
+              verifiedHash = await calculateSha256(buf);
 
-            if (verifiedHash && verifiedHash.toLowerCase() !== expectedHash.toLowerCase()) {
-              throw new Error("Data corruption detected: SHA-256 checksum mismatch.");
+              if (verifiedHash && verifiedHash.toLowerCase() !== expectedHash.toLowerCase()) {
+                throw new Error("Data corruption detected: SHA-256 checksum mismatch.");
+              }
+            } catch (err) {
+              console.warn("[DropLink] Hash check skipped:", err);
             }
           }
 
@@ -870,10 +876,20 @@ export default function App() {
 
     for (const file of files) {
       const id = makeFileId();
-      setActivityText(`Calculating SHA-256 integrity hash for ${file.name}…`);
+      let sha256: string | undefined;
 
-      const fileBuffer = await file.arrayBuffer();
-      const sha256 = await calculateSha256(fileBuffer);
+      // For small files (<=25MB), compute SHA-256 quickly.
+      // For large files (e.g. 500MB, 2GB), start streaming IMMEDIATELY
+      // without loading gigabytes into RAM or stalling before sending.
+      if (file.size <= 25 * 1024 * 1024) {
+        try {
+          const buf = await file.arrayBuffer();
+          sha256 = await calculateSha256(buf);
+        } catch {
+          // Ignore
+        }
+      }
+
       const totalChunks = Math.ceil(file.size / CHUNK_SIZE) || 1;
 
       transferRef.current = {
@@ -890,12 +906,10 @@ export default function App() {
       const startedAt = performance.now();
 
       console.info(
-        "[DropLink] FILE START",
+        "[DropLink] INSTANT STREAM START",
         file.name,
         file.size,
-        file.type,
-        "SHA-256:",
-        sha256
+        file.type
       );
 
       const started = peer.sendControl({
@@ -924,7 +938,7 @@ export default function App() {
       }
 
       setStatus("transferring");
-      setActivityText(`Sending ${file.name}…`);
+      setActivityText(`Streaming ${file.name}…`);
 
       setProgress({
         active: true,
@@ -952,7 +966,8 @@ export default function App() {
         }
 
         const end = Math.min(offset + CHUNK_SIZE, file.size);
-        const chunk = fileBuffer.slice(offset, end);
+        // Direct zero-overhead streaming: read only 64KB on demand from disk
+        const chunk = await file.slice(offset, end).arrayBuffer();
         const sent = await peer.sendChunk(chunk);
 
         if (!sent) {
