@@ -46,27 +46,10 @@ The signaling server coordinates:
 
 The file is sent through the WebRTC data channel.
 
-## Start server
 
-Windows PowerShell:
 
-cd C:\droplink\server
-npm install
-npm run dev
 
-## Start frontend
 
-Open another PowerShell:
-
-cd C:\droplink\web
-npm install
-npm run dev
-
-Then open:
-
-http://localhost:5173
-
-## Test
 
 On browser/device A:
 
@@ -82,23 +65,7 @@ LIVE / P2P LINK
 
 select or drag a file.
 
-## LAN
 
-Vite is configured with host=true.
-
-Find your Windows PC's LAN IP:
-
-ipconfig
-
-Then another device can open:
-
-http://YOUR-PC-IP:5173
-
-The signaling connection automatically uses:
-
-ws://YOUR-PC-IP:8080
-
-Windows Firewall may need to allow Node.js/Vite on Private networks.
 
 ## Production
 
@@ -114,20 +81,6 @@ for production internet-wide reliability.
 
 TURN should be added for networks where direct WebRTC ICE connectivity cannot be established.
 
-## Testing
-
-Run signaling server tests:
-```powershell
-cd C:\droplink\server
-npm test
-```
-
-Run frontend protocol and security tests:
-```powershell
-cd C:\droplink\web
-npm test
-npm run build
-```
 
 ## Security Features
 
